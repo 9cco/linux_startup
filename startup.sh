@@ -16,11 +16,10 @@ if [ -f "$DATE_FILE" ]; then
 else
     echo "Could not find file $DATE_FILE. Assuming this is first run."
     day_diff=$((N+1))
-    # If there is no last_run file, then we create it
-    #date +%Y-%m-%d > $DATE_FILE
 fi
 
 # If the day difference is larger than the accepted delay (N), then we run the command.
 if [[ $day_diff -gt $N ]]; then
     sudo apt update && sudo apt upgrade -y
+    date +%Y-%m-%d > $DATE_FILE
 fi

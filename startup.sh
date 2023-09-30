@@ -3,7 +3,9 @@
 # We want the script to run `sudo apt update && sudo apt upgrade -y` upon boot if there has been n days since last time.
 
 # Constants
-DATE_FILE="$HOME/Scripts/Shell/Startup/last_run.txt" # location of memory of the day the script was run last.
+SCRIPT=$(readlink -f "$0")
+DIR_PATH=$(dirname "$SCRIPT")
+DATE_FILE="$DIR_PATH/last_run.txt" # location of memory of the day the script was run last.
 N=4 # maximum number of days allowed for the delay.
 
 # This section sets day_diff which is the difference between the time "now" and when the script was last run.
@@ -12,6 +14,7 @@ if [ -f "$DATE_FILE" ]; then
     last_run=$(date -f $DATE_FILE +%s)
     now=$(date +%s)
     day_diff=$(((now - last_run)/3600/24))
+    echo -n "Days since last run: "
     echo $day_diff
 else
     echo "Could not find file $DATE_FILE. Assuming this is first run."
@@ -21,5 +24,5 @@ fi
 # If the day difference is larger than the accepted delay (N), then we run the command.
 if [[ $day_diff -gt $N ]]; then
     sudo apt update && sudo apt upgrade -y
-    date +%Y-%m-%d > $DATE_FILE
+    date +%Y-%m-%d > $DATE_FILE # Write the current date to the last run file.
 fi
